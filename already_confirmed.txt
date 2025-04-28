@@ -1,0 +1,171 @@
+site.js tambahin dibawah thead
+
+.confirmation-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 40px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.confirmation-header {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.confirmation-message {
+  color: #34495e;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.confirmation-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #28242c;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.confirmation-link:hover {
+  background-color: #393739;
+  color: #fff;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  height: 60px;
+}
+
+
+
+alreadyconfirmed.cshtml
+@page
+@model AlreadyConfirmed
+@{
+    ViewData["Title"] = "Email Already Confirmed";
+}
+
+<style>
+    body {
+        background-color: #f69d36;
+    }
+</style>
+
+<div class="confirmation-container">
+    <div class="logo-container">
+        <img src="~/assets/images/logo/fmlx.png" alt="Logo" class="logo" />
+    </div>
+
+    <h1 class="confirmation-header">@ViewData["Title"]</h1>
+
+   
+    <p class="confirmation-message">
+        Your email address has already been successfully confirmed.
+        You can now proceed to log in to your account
+    </p>
+
+    <div style="text-align: center;">
+        <a class="confirmation-link" asp-area="Identity" asp-page="/Account/Login" >
+            Go To Login
+        </a>
+    </div>
+    
+</div>
+
+
+confirmemail.cshtml
+hapus style kecuali yg body (udah dari site.css)
+
+alreadyconfirmed.cshtml
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+#nullable disable
+
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace InventoryManagementSystem.Areas.Identity.Pages.Account
+{
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public class AlreadyConfirmed : PageModel
+    {
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        public void OnGet()
+        {
+        }
+    }
+}
+
+
+confirmemail.cshtml tambahin if user.emailconfirmed
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+#nullable disable
+
+using System.Text;
+using InventoryManagementSystem.Models.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+
+namespace InventoryManagementSystem.Areas.Identity.Pages.Account
+{
+    public class ConfirmEmailModel : PageModel
+    {
+        private readonly UserManager<User> _userManager;
+
+        public ConfirmEmailModel(UserManager<User> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [TempData]
+        public string StatusMessage { get; set; }
+        public async Task<IActionResult> OnGetAsync(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToPage("/Index");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return RedirectToPage("/Account/AlreadyConfirmed", new { area = "Identity" });
+            }
+
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            return Page();
+        }
+    }
+}
