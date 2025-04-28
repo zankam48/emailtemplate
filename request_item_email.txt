@@ -1,0 +1,239 @@
+emailsender.cs (add method below)
+public async Task<string> GetEmailTemplateAsync(string templateName, Dictionary<string, string> placeholders)
+{
+    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", templateName);
+    if (!File.Exists(filePath))
+    {
+        throw new FileNotFoundException("Email template not found.", filePath);
+    }
+
+    var content = await File.ReadAllTextAsync(filePath);
+
+    if (placeholders != null)
+    {
+        foreach (var placeholder in placeholders)
+        {
+            content = content.Replace($"{{{placeholder.Key}}}", placeholder.Value);
+        }
+    }
+
+    return content;
+}
+
+
+create EmailTemplates/ within the same hierachy as Areas/
+add RequestRejected.html
+<table style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; background-color: #ffffff;'>
+    <tr>
+        <td style='text-align: center; padding-bottom: 20px;'>
+            <img src='https://i.imgur.com/a8UR325.png' alt='FMLX Logo' style='height: 60px;' />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div style='text-align: center;'>
+                <h2 style='color: #333;'>Request Rejected</h2>
+                <p style='color:#2c3e50;'>Hello {UserName},</p>
+                <p style='color:#2c3e50;'>We regret to inform you that your request has been rejected.</p>
+                <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; text-align: left;'>
+                    <h3 style='margin-top: 0; color: #333;'>Request Details:</h3>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Item:</strong> {ItemName}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Quantity:</strong> {Quantity}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Category:</strong> {Category}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Type:</strong> {Type}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Rejected On:</strong> {RejectionDate}</p>
+                </div>
+                <div style='background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; text-align: left; border-left: 4px solid #f69d36;'>
+                    <h3 style='margin-top: 0; color: #333;'>Admin Note:</h3>
+                    <p style='margin: 5px 0; color: #2c3e50;'>{AdminNote}</p>
+                </div>
+                <p style='color:#2c3e50;'>If you have any questions regarding this decision, please contact the admin team.</p>
+                <p style='color: #888; font-size: 0.9em;'>You can submit a new request if needed.</p>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style='padding-top: 20px; text-align: center; border-top: 1px solid #eee; margin-top: 20px;'>
+            <p style='color: #888; font-size: 0.8em;'>
+                This is an automated message from the FMLX Inventory Management System.<br>
+                Please do not reply to this email.
+            </p>
+        </td>
+    </tr>
+</table>
+
+
+RequestApproved.html
+<table style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; background-color: #ffffff;'>
+    <tr>
+        <td style='text-align: center; padding-bottom: 20px;'>
+            <img src='https://i.imgur.com/a8UR325.png' alt='FMLX Logo' style='height: 60px;' />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div style='text-align: center;'>
+                <h2 style='color: #333;'>Request Approved</h2>
+                <p style='color:#2c3e50;'>Hello {UserName},</p>
+                <p style='color:#2c3e50;'>We're pleased to inform you that your request has been approved!</p>
+                <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; text-align: left;'>
+                    <h3 style='margin-top: 0; color: #333;'>Request Details:</h3>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Item:</strong> {ItemName}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Quantity:</strong> {Quantity}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Category:</strong> {Category}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Type:</strong> {Type}</p>
+                    <p style='margin: 5px 0; color: #2c3e50;'><strong>Requested On:</strong> {RequestDate}</p>
+                </div>
+                <p style='color:#2c3e50;'>You can now pick up your requested item from the inventory management department.</p>
+                <p style='color: #888; font-size: 0.9em;'>For any questions, please contact the admin team.</p>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style='padding-top: 20px; text-align: center; border-top: 1px solid #eee; margin-top: 20px;'>
+            <p style='color: #888; font-size: 0.8em;'>
+                This is an automated message from the FMLX Inventory Management System.<br>
+                Please do not reply to this email.
+            </p>
+        </td>
+    </tr>
+</table>
+
+
+RequestController.cs admin
+[HttpPost]
+	public async Task<IActionResult> AdminNoteRejection(string? adminNote, Guid? RequestId, string isApproved)
+	{
+		// Does the request even exist?
+		if (RequestId is null){
+			return BadRequest();
+		}
+		// Does the admin leave any note?
+		if (string.IsNullOrEmpty(adminNote))
+		{
+			adminNote = "Reject";
+		}
+
+		// Get the mentioned request
+		var request = (await _request.GetAll("Item,Item.Type,Item.Category,Item.SubCategory")).FirstOrDefault(req => req.RequestId == RequestId);
+		if (request is null){
+			return BadRequest();
+		}
+
+		// Update request status
+		request.RequestStatusId = (int)RequestStatusEnum.Rejected; //Rejected
+		request.AdminNote = adminNote;
+		TimeZoneInfo jakartaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+		request.RejectedAt = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, jakartaTimeZone);
+ 
+
+		// Save the note
+		await _request.SaveAsync();
+
+		// Send notification to employee who requested
+		await _notificationModule.Create(
+			$"Your request for item ({request.Item.ItemName}) has been Rejected. Note: {adminNote}", 
+			request.UserId);
+
+		// Loggging Purposes
+		User? user = await _userManager.GetUserAsync(User);
+		User userData = _context.Users.Find(request.UserId);
+		if (userData != null && !string.IsNullOrEmpty(userData.Email))
+		{
+			var placeholders = new Dictionary<string, string>
+			{
+				{ "UserName", userData.UserName },
+				{ "ItemName", request.Item.ItemName },
+				{ "Quantity", request.Quantity.ToString() },
+				{ "Category", request.Item.Category?.CategoryName ?? "N/A" },
+				{ "Type", request.Item.Type?.Name ?? "N/A" },
+				{ "RejectionDate", request.RejectedAt?.ToString("MMM dd, yyyy") ?? DateTime.Now.ToString("MMM dd, yyyy") },
+				{ "AdminNote", adminNote }
+			};
+			
+			string emailContent = await ((EmailSender)_emailSender).GetEmailTemplateAsync("RequestRejected.html", placeholders);
+			
+			await _emailSender.SendEmailAsync(userData.Email, "Request Rejected", emailContent);
+		}
+
+		string usernameUser = userData.UserName;
+		_logger.LogInformation("Admin Rejected to {user}, item id {itemId}, with note {note}",usernameUser,request.Item.ItemId,adminNote);
+		TempData["Warning"] = $"You have rejected this request from {usernameUser}";
+		return RedirectToAction("WaitingApproval");
+	}
+
+Approve method
+[HttpPost]
+	public async Task<IActionResult> Approve(Guid? RequestId, RequestStatusEnum requestStatus = RequestStatusEnum.Approved){
+		// Getting the request mentioned and update its status
+		var request = (await _request.GetAll("Item,Item.Type,Item.Category,Item.SubCategory,User")).FirstOrDefault(req => req.RequestId == RequestId);
+		// var request = await _request.Get(RequestId.Value);
+
+		if (!RequestId.HasValue || RequestId.HasValue == null){
+			return BadRequest(); // Invalid request ID
+		}
+
+		// Create a new Active Request
+		ActiveRequest? activeRequest = await _requestAdminService.NewActiveRequest(request);
+
+		#region change from table request
+		var newStatus = await _context.RequestStatuses.FirstOrDefaultAsync(s => s.Id == (int)requestStatus);
+		if (newStatus is null){
+			return BadRequest();
+		}
+
+		// Updating the request status of an Item
+		request.RequestStatus = newStatus;
+		request.RequestStatusId = newStatus.Id;
+		request.ActiveRequestId = activeRequest.ActiveRequestId;
+
+		// Updating Item value
+		if (request.Item is not null){
+			request.Item.Availability = false;
+			
+			request.Item.Quantity = request.Item.Quantity - request.Quantity;
+			if(request.Item.TypeId == 2 && request.Item.Quantity != 0)
+			{
+				request.Item.Availability = true;
+			}
+		}
+		
+		// Update request status
+		request.RequestStatusId = (int)RequestStatusEnum.Approved;
+		// Save the updated request value
+		await _context.SaveChangesAsync();
+
+		await _notificationModule.Create(
+			$"Your request for item ({request.Item.ItemName}) has Approved.", 
+			request.UserId
+		);
+		#endregion
+
+		User? user = await _userManager.GetUserAsync(User);
+		User userData = _context.Users.Find(request.UserId);
+		if (userData != null && !string.IsNullOrEmpty(userData.Email))
+		{
+			var placeholders = new Dictionary<string, string>
+			{
+				{ "UserName", userData.UserName },
+				{ "ItemName", request.Item.ItemName },
+				{ "Quantity", request.Quantity.ToString() },
+				{ "Category", request.Item.Category?.CategoryName ?? "N/A" },
+				{ "Type", request.Item.Type?.Name ?? "N/A" },
+				{ "RequestDate", request.RequestDate.ToString("MMM dd, yyyy") }
+			};
+			
+			string emailContent = await ((EmailSender)_emailSender).GetEmailTemplateAsync("RequestApproved.html", placeholders);
+			
+			await _emailSender.SendEmailAsync(userData.Email, "Request Approved", emailContent);
+		}
+
+		string usernameUser = userData.UserName;
+		_logger.LogInformation("Admin approved to {user}. Item: {itemId}",usernameUser,request.Item.ItemId);
+
+		TempData["Success"] = $"Successfully Approved Request from {usernameUser}";
+		return RedirectToAction("WaitingApproval");
+	}
+
+
+
