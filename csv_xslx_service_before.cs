@@ -412,3 +412,50 @@ public class ExcelService
 		return cityId;
 	}
 }
+
+// upload csv in controller
+[HttpGet]
+public IActionResult UploadCsv()
+{
+	return View(Index);
+}
+
+[HttpPost]
+public async Task<IActionResult> UploadCsv(IFormFile file)
+{
+	if (file == null || file.Length == 0)
+	{
+		TempData["Error"] = "Please select a file to upload";
+		return RedirectToAction(nameof(Index));
+	}
+
+	try
+	{
+		var (success, message, items) = await _csvService.ProcessCsvFileAsync(file);
+		
+		if (!success)
+		{
+			TempData["Error"] = message;
+			return RedirectToAction(nameof(Index));
+		}
+
+		var importResult = await _csvService.ImportItemsToDatabase(items);
+		
+		if (importResult)
+		{
+			TempData["Success"] = $"Successfully imported {items.Count} items from CSV";
+			_logger.LogInformation("Successfully imported {count} items via CSV upload", items.Count);
+		}
+		else
+		{
+			TempData["Error"] = "Error occurred while importing data to database";
+		}
+	}
+	catch (Exception ex)
+	{
+		_logger.LogError(ex, "Error processing CSV upload: {Message}", ex.Message);
+		TempData["Error"] = $"Error processing CSV: {ex.Message}";
+	}
+
+	return RedirectToAction(nameof(Index));
+}
