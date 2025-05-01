@@ -1,0 +1,57 @@
+add this button above upload button
+ <div class="btn-act">
+                        <div class="dropdown"> 
+                            <a class="download-btn dropdown-toggle" href="#" role="button" id="downloadDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-download"></i>
+                                <p>Download Template</p> 
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="downloadDropdownButton">
+                                <li><a class="dropdown-item" href="/templates/InventoryTemplate.csv">Download CSV</a></li>
+                                <li><a class="dropdown-item" href="/templates/InventoryTemplate.xlsx">Download XLSX</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="btn-act upload">
+                        <a data-bs-toggle="modal" data-bs-target="#uploadModal" class="upload-btn" style="">
+                            <i class="mdi mdi-upload"></i>
+                            <p>Upload CSV/XLSX</p>
+                        </a>
+                    </div>
+
+href = wwwrooot/templates/csv and xlsx
+
+
+add this download button styling below uploadcsv
+
+.upload-csv {
+  display: flex;
+  flex-direction: row;
+  margin: 2rem 0 0 0;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 50px;
+}
+
+.download-btn { 
+  color: white; 
+  text-decoration: none;
+  list-style: none;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  gap: .5rem; 
+  padding: 0; 
+  margin: 0;
+}
+
+.download-btn p { 
+  font-size: .8rem; 
+  margin: 0; 
+  padding: 0; 
+  flex-grow: 1; 
+  display: block; 
+}
+
+.download-btn:hover { 
+  color: #ccc; 
+}
