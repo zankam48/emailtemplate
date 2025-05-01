@@ -1,0 +1,28 @@
+[Chat Feature]
+- Create chat feature so admin and employee will be able to chat with each other regardless if there's any urgency or not.
+- Use signalr to support realtime chat communication and implement it by creating a hub (chathub) to sendmessage.
+- Create controller file for both admin and employee to [complete this]
+- Implement repository pattern to get historychat from database and make an update
+- Implement dto to send message (SendMessageDTO) and ChatMessageDTO for [complete this]
+- Use fluent api for better validation such as to validate the maximum words of message to send and to prevent xss attack
+- Create the client signalr code with javascript to [complete this]
+
+
+[Fix Sorting]
+- Make the sorting feature in itemview to be able to function as expected in every page and not only in page 1
+- To achieve this, the filtermodel property for sorting which are sortby and sortorder need to be assigned in the pagination components
+
+[Refactor upload method in itemview]
+- Move all helper methods to the service layer by creating separate service file such as getentityidservice and fileimportservice that can be use by csv and excel service.
+- move all of the method for processing excel file to its own service file (excelservice.cs) 
+- Make the uploadfile post method to handle both excel and csv file
+
+[Csv Uploader]
+- Use csvhelper to parsing csv file to complete the csv uploader feature to upload bulk item data
+
+[Csv/Excel Template]
+- Create csv and excel template file for admin to follow
+- Create download button in itemview to download the file
+
+
+[Anti spam chat]
