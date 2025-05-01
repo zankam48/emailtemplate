@@ -92,3 +92,14 @@ public class CsvService : FileImportService, ICsvService
         }
     }
 }
+
+/**
+
+				// (success, message, items) = await _csvService.ProcessCsvFileAsync(file);
+				// if (!success)
+				// {
+				// 	TempData["Error"] = message;
+				// 	return RedirectToAction(nameof(Index));
+				// }
+				// importResult = await _csvService.ImportItemsToDatabase(items);
+**/
