@@ -1,0 +1,13 @@
+- Sorting feature in itemview doesn't persist beyond page 1.
+- Sorting doesn't persist beyond page 1.
+
+g
+InventoryManagementSystem\Areas\Admin\Views\Shared\Components\Pagination\Default.cshtml - employee too
+add this in every list
+subCategoryId = Model.SubCategoryId,
+                SortBy = Model.SortBy,
+                SortOrder = Model.SortOrder
+
+InventoryManagementSystem\Areas\Admin\Views\ItemView\Index.cshtml - employee too
+change this asp-route-filterModel.Page="1"
+to this asp-route-filterModel.Page="@Model.filterModel.Page"
