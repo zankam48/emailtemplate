@@ -102,4 +102,26 @@ public class CsvService : FileImportService, ICsvService
 				// 	return RedirectToAction(nameof(Index));
 				// }
 				// importResult = await _csvService.ImportItemsToDatabase(items);
+    1. delete csvservice program.cs
+    2. delete 3 injection csvservice in itemviewcontroller, and in the upload file copy this below
+    _logger.LogInformation("The CSV file is not supported yet, please use Excel file instead");
+				TempData["Error"] = "The CSV file is not supported yet, please use Excel file instead";
+				return RedirectToAction(nameof(Index));
+    3. replace csvservice to this
+    namespace InventoryManagementSystem.Areas.Admin.Services;
+	public class CsvService
+	{}
+   4.  delete private fields in excelservice
+   	public class ExcelService : FileImportService, IExcelService 
+{
+    public ExcelService(
+        IItemRepository item,
+        IItemViewRepository itemView,
+        IGetEntityIdService getEntityIdService,
+        ItemViewAdminService itemViewService,
+        IMapper mapper,
+        ILogger<ExcelService> logger) 
+        : base(item, itemView, getEntityIdService, itemViewService, mapper, logger)
+    {
+    }
 **/
