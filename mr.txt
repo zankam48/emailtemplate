@@ -26,3 +26,29 @@
 
 
 [Anti spam chat]
+
+
+
+
+
+add qty if item name exist
+in file import service add this
+public async Task<bool> AddItemToDatabaseAsync(ItemDTO itemDTO)
+    {
+        try
+        {
+            var existingItem = await _item.Get(u => u.ItemName == itemDTO.ItemName);
+
+            if (existingItem != null)
+            {
+                existingItem.Quantity += itemDTO.Quantity;
+                _item.Update(existingItem);
+                await _item.SaveAsync();
+                _logger.LogInformation("Updated quantity for existing item with ItemName: {ItemName}", itemDTO.ItemName);
+                return true;
+            }
+
+            // Get IDs for category, subcategory, and city
+            var categoryId = await _getEntityIdService.GetCategoryId(itemDTO.CategoryName);
+            var subCategoryId = await _getEntityIdService.GetSubCategoryId(itemDTO.SubCategoryName);
+            var cityId = await _getEntityIdService.GetCityId(itemDTO.CityName);
