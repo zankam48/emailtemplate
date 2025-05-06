@@ -1,0 +1,61 @@
+Here's your list sorted by OP number and grouped by task type (Feat, Fix, Refactor, Others):
+
+✅ Feat
+OP Number	Title
+OP-58193	Enable Employee Notification
+OP-68489	Cancelled request on rejected view will have expiration date after rejection
+OP-68493	Sorting items in Item View by availability, qty, name, type and category
+OP-68494	Complete pick up desk features to retrieve active request id by QR
+OP-68495	Create Return Desk page to be able to accept active request id (from employee, QR Code)
+OP-68496	Add QR feature to generate active request id
+OP-79166	Add pagination request
+OP-79662	Enable Employee Notification
+OP-80247	Upload to database with CSV
+OP-80297	CSV and Excel template for admin to follow
+OP-80309	Admin and employee can chat if any urgent or not
+OP-80338	Add responsiveness to subcategories page
+OP-80352	Add Mark as Read for Admin Notification
+OP-105367	Implement confirmation modal for action button in active request
+OP-105482	Seeding employee user and items in database
+OP-105602	Create user
+OP-105613	Change favicon on tab to Formulatrix logo
+OP-105649	Add year in copyright footer
+OP-10573	Highlight the active sidebar page
+OP-105748	Make page more visually appealing
+OP-105814	Email confirmation for registration using SMTP
+OP-106117	Create new page for redirection if user has already confirmed their email
+OP-106518	Login with Google flow
+OP-106902	Send email upon user's request being approved or rejected
+
+🛠️ Fix
+OP Number	Title
+OP-105066	Default picture not found
+OP-105142	Sidebar not scrollable
+OP-105226	Default picture not found for employee
+OP-105300	Lost Item Causing Error on Admin Home
+OP-105376	Default route throws Access Denied
+OP-105419	Seeding item appear twice
+OP-105584	Inconsistent notification counter in header
+OP-105653	Logout redirects to a nonexistent URL
+OP-105724	Register with Existing EmployeeCode Crash
+OP-106122	Seeding employee in database
+OP-106136	Borrowable item availability issue
+OP-106570	Sorting feature in ItemView doesn't persist beyond page 1
+OP-106960	Wrong repository method at userview controller
+OP-106963	Fix CSV and Excel uploader
+OP-107039	Add missing reference
+OP-80300	When Admin deletes waiting pickup (crash)
+OP-80342	Item creation expiry date requirement
+OP-59291	"See more" consumable user request didn't work
+
+🧹 Refactor
+OP Number	Title
+OP-68488	Separate the JS on waiting approval, approved and rejected admin for more DRY
+OP-73984	ItemViewController
+OP-79881	Refactoring controller request on action approve
+OP-80236	Refactoring JS code to be more DRY
+OP-80311	Refactoring method upload data on itemview
+OP-105608	Implement DTO for Category page
+OP-106119	Request Status to Enum
+OP-106416	Utilize ActiveRequestStatusEnum
+OP-106961	Simplify Pagination
