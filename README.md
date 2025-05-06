@@ -1,6 +1,6 @@
 # emailtemplate
 
-https://www.canva.com/design/DAGmj_4xs28/BB3WbaVgZYxFszEy0C9lIQ/edit?utm_content=DAGmj_4xs28&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+https://docs.google.com/document/d/1cJZkakfzxuNSJwFl6JSKCb7bZERoSu2BYs-TjZ5CH-4/edit?usp=sharing
 
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
